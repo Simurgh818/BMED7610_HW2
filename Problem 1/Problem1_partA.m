@@ -129,7 +129,7 @@ end
 firing_rate_gaus_ten = firing_rate_gaus_ten*10; %converting to Hz
 
 %% Plots
-
+figure(1)
 subplot(3,2,1)
 plot(t, firing_rate);
 title('The first trial firing rate using fixed bins of 100 msec')
@@ -163,6 +163,55 @@ ylabel('rate (Hz)')
 subplot(3,2,6)
 plot(t, firing_rate_gaus_ten)
 title('The firing rate of first trail using gaussian with sigma of 10 msec.')
+xlabel('time (msec)')
+ylabel('rate (Hz)')
+
+%% g) the firing rate for the average of all trials, using bins of 100 and 
+%     10 msec.
+dt = 100;
+
+firing_rate_avg = zeros([1 8900]);
+num_spikes_avg = zeros([1 8900]);
+for time = 100:9000
+    num_spikes_avg(time) = mean(sum(spk_times(:, :)>time & spk_times(:, :)<(time+dt))/28);
+    firing_rate_avg(time) = num_spikes_avg(time)/dt;
+    if mod(time, 100) == 0
+        num_spikes_avg(time-99:time)= num_spikes_avg(time);
+        firing_rate_avg(time-99:time) = firing_rate_avg(time);
+        time = time + dt;
+        
+    end
+    
+end
+firing_rate_avg = firing_rate_avg*10; %converting to Hz
+
+dt = 10;
+
+firing_rate_avg_ten = zeros([1 8900]);
+num_spikes_avg_ten = zeros([1 8900]);
+for time = 100:9000
+    num_spikes_avg_ten(time) = mean(sum(spk_times(:, :)>time & spk_times(:, :)<(time+dt))/28);
+    firing_rate_avg_ten(time) = num_spikes_avg_ten(time)/dt;
+    if mod(time, 10) == 0
+        num_spikes_avg_ten(time-9:time)= num_spikes_avg_ten(time);
+        firing_rate_avg_ten(time-9:time) = firing_rate_avg_ten(time);
+        time = time + dt;
+        
+    end
+    
+end
+firing_rate_avg_ten = firing_rate_avg_ten*10; %converting to Hz
+
+figure(2)
+subplot(1,2,1)
+plot(t, firing_rate_avg);
+title('The avg firing rate for all trials using fixed bins of 100 msec')
+xlabel('time (msec)')
+ylabel('rate (Hz)')
+
+subplot(1,2,2)
+plot(t, firing_rate_avg_ten);
+title('The avg firing rate for all trials using fixed bins of 10 msec')
 xlabel('time (msec)')
 ylabel('rate (Hz)')
 %% Gausian Window Function
